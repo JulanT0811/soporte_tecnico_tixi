@@ -1,0 +1,1045 @@
+{
+  "info": {
+    "name": "Soporte Técnico API",
+    "_postman_id": "soporte-tecnico-api",
+    "description": "Colección para pruebas CRUD del sistema de soporte técnico con autenticación JWT",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔐 Autenticación",
+      "item": [
+        {
+          "name": "🔑 Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('access_token', json.access);",
+                  "pm.collectionVariables.set('refresh_token', json.refresh);",
+                  "console.log('✓ Login exitoso - Token guardado');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login", ""]
+            }
+          }
+        },
+        {
+          "name": "📝 Registro",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('access_token', json.access);",
+                  "pm.collectionVariables.set('refresh_token', json.refresh);",
+                  "console.log('✓ Usuario registrado - Token guardado');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"nuevo_usuario\",\n  \"email\": \"usuario@example.com\",\n  \"password\": \"Pass1234!\",\n  \"password2\": \"Pass1234!\",\n  \"first_name\": \"Juan\",\n  \"last_name\": \"Pérez\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/",
+              "host": ["{{base_url}}"],
+              "path": ["users", ""]
+            }
+          }
+        },
+        {
+          "name": "Obtener Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('access_token', json.access);",
+                  "pm.collectionVariables.set('refresh_token', json.refresh);",
+                  "console.log('✓ Token guardado');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "token", ""]
+            }
+          }
+        },
+        {
+          "name": "Refrescar Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('access_token', json.access);",
+                  "console.log('✓ Token refrescado');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/token/refresh/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "token", "refresh", ""]
+            }
+          }
+        },
+        {
+          "name": "🚪 Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/logout/",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📂 Categorías",
+      "item": [
+        {
+          "name": "[GET] Listar Categorías",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categories/?is_active=true",
+              "host": ["{{base_url}}"],
+              "path": ["categories", ""],
+              "query": [
+                {
+                  "key": "is_active",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "[POST] Crear Categoría",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('category_id', json.id);",
+                  "console.log('✓ Categoría creada con ID: ' + json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hardware\",\n  \"description\": \"Problemas de hardware\",\n  \"is_active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories/",
+              "host": ["{{base_url}}"],
+              "path": ["categories", ""]
+            }
+          }
+        },
+        {
+          "name": "[GET] Obtener Categoría",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categories/{{category_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["categories", "{{category_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "[PUT] Actualizar Categoría",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hardware - Actualizado\",\n  \"description\": \"Problemas de hardware actualizado\",\n  \"is_active\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories/{{category_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["categories", "{{category_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "[PATCH] Activar/Desactivar Categoría",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categories/{{category_id}}/toggle_active/",
+              "host": ["{{base_url}}"],
+              "path": ["categories", "{{category_id}}", "toggle_active", ""]
+            }
+          }
+        },
+        {
+          "name": "[DELETE] Eliminar Categoría",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categories/{{category_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["categories", "{{category_id}}", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⚡ Prioridades",
+      "item": [
+        {
+          "name": "[GET] Listar Prioridades",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/priorities/",
+              "host": ["{{base_url}}"],
+              "path": ["priorities", ""]
+            }
+          }
+        },
+        {
+          "name": "[POST] Crear Prioridad",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('priority_id', json.id);",
+                  "console.log('✓ Prioridad creada con ID: ' + json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"level\": 2,\n  \"name\": \"Media\",\n  \"description\": \"Prioridad media\",\n  \"color\": \"#FFA500\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/priorities/",
+              "host": ["{{base_url}}"],
+              "path": ["priorities", ""]
+            }
+          }
+        },
+        {
+          "name": "[GET] Obtener Prioridad",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/priorities/{{priority_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["priorities", "{{priority_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "[PUT] Actualizar Prioridad",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"level\": 2,\n  \"name\": \"Media - Actualizada\",\n  \"description\": \"Prioridad media actualizada\",\n  \"color\": \"#FF8C00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/priorities/{{priority_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["priorities", "{{priority_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "[DELETE] Eliminar Prioridad",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/priorities/{{priority_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["priorities", "{{priority_id}}", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🎫 Tickets",
+      "item": [
+        {
+          "name": "[GET] Listar Tickets",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tickets/?status=open&ordering=-created_at",
+              "host": ["{{base_url}}"],
+              "path": ["tickets", ""],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "open"
+                },
+                {
+                  "key": "ordering",
+                  "value": "-created_at"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "[POST] Crear Ticket",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('ticket_id', json.id);",
+                  "console.log('✓ Ticket creado con ID: ' + json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Mi laptop no enciende\",\n  \"description\": \"La laptop está dañada y no enciende. Necesito que la revisen.\",\n  \"category\": 1,\n  \"priority\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tickets/",
+              "host": ["{{base_url}}"],
+              "path": ["tickets", ""]
+            }
+          }
+        },
+        {
+          "name": "[GET] Obtener Ticket",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tickets/{{ticket_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["tickets", "{{ticket_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "[PUT] Actualizar Ticket",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Mi laptop no enciende - URGENTE\",\n  \"description\": \"La laptop está dañada y no enciende. Necesito que la revisen urgentemente.\",\n  \"category\": 1,\n  \"priority\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tickets/{{ticket_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["tickets", "{{ticket_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "[POST] Asignar Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tickets/{{ticket_id}}/assign/",
+              "host": ["{{base_url}}"],
+              "path": ["tickets", "{{ticket_id}}", "assign", ""]
+            }
+          }
+        },
+        {
+          "name": "[POST] Cambiar Estado Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_progress\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tickets/{{ticket_id}}/change_status/",
+              "host": ["{{base_url}}"],
+              "path": ["tickets", "{{ticket_id}}", "change_status", ""]
+            }
+          }
+        },
+        {
+          "name": "[GET] Estadísticas Ticket",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tickets/{{ticket_id}}/stats/",
+              "host": ["{{base_url}}"],
+              "path": ["tickets", "{{ticket_id}}", "stats", ""]
+            }
+          }
+        },
+        {
+          "name": "[DELETE] Eliminar Ticket",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tickets/{{ticket_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["tickets", "{{ticket_id}}", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💬 Comentarios",
+      "item": [
+        {
+          "name": "[GET] Listar Comentarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/comments/",
+              "host": ["{{base_url}}"],
+              "path": ["comments", ""]
+            }
+          }
+        },
+        {
+          "name": "[POST] Crear Comentario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('comment_id', json.id);",
+                  "console.log('✓ Comentario creado con ID: ' + json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticket\": {{ticket_id}},\n  \"content\": \"He revisado el problema. Necesitaré 2 horas para repararlo.\",\n  \"is_internal\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/comments/",
+              "host": ["{{base_url}}"],
+              "path": ["comments", ""]
+            }
+          }
+        },
+        {
+          "name": "[GET] Obtener Comentario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/comments/{{comment_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["comments", "{{comment_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "[PUT] Actualizar Comentario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticket\": {{ticket_id}},\n  \"content\": \"He revisado el problema. Necesitaré 3 horas para repararlo, no 2.\",\n  \"is_internal\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/comments/{{comment_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["comments", "{{comment_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "[DELETE] Eliminar Comentario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/comments/{{comment_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["comments", "{{comment_id}}", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📎 Adjuntos",
+      "item": [
+        {
+          "name": "[GET] Listar Adjuntos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attachments/",
+              "host": ["{{base_url}}"],
+              "path": ["attachments", ""]
+            }
+          }
+        },
+        {
+          "name": "[POST] Subir Adjunto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('attachment_id', json.id);",
+                  "console.log('✓ Adjunto subido con ID: ' + json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "ticket",
+                  "value": "{{ticket_id}}",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/attachments/",
+              "host": ["{{base_url}}"],
+              "path": ["attachments", ""]
+            }
+          }
+        },
+        {
+          "name": "[GET] Obtener Adjunto",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attachments/{{attachment_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["attachments", "{{attachment_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "[DELETE] Eliminar Adjunto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/attachments/{{attachment_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["attachments", "{{attachment_id}}", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "👥 Usuarios",
+      "item": [
+        {
+          "name": "[GET] Listar Usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/?is_active=true",
+              "host": ["{{base_url}}"],
+              "path": ["users", ""],
+              "query": [
+                {
+                  "key": "is_active",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "[POST] Crear Usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.collectionVariables.set('user_id', json.id);",
+                  "console.log('✓ Usuario creado con ID: ' + json.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"tecnico_juan\",\n  \"email\": \"juan@soporte.com\",\n  \"password\": \"Pass1234!\",\n  \"first_name\": \"Juan\",\n  \"last_name\": \"Pérez\",\n  \"is_active\": true,\n  \"is_staff\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/",
+              "host": ["{{base_url}}"],
+              "path": ["users", ""]
+            }
+          }
+        },
+        {
+          "name": "[GET] Obtener Usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{user_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "[PUT] Actualizar Usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"tecnico_juan\",\n  \"email\": \"juan.nuevo@soporte.com\",\n  \"first_name\": \"Juan\",\n  \"last_name\": \"Pérez López\",\n  \"is_active\": true,\n  \"is_staff\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{user_id}}", ""]
+            }
+          }
+        },
+        {
+          "name": "[DELETE] Eliminar Usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/{{user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{user_id}}", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🏥 Health Check",
+      "item": [
+        {
+          "name": "[GET] Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health/",
+              "host": ["{{base_url}}"],
+              "path": ["health", ""]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "category_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "priority_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ticket_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "comment_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "attachment_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
